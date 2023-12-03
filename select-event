@@ -1,0 +1,75 @@
+<!-- Page pour Sélectionner un Événement à Modifier -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Sélectionner un Événement</title>
+    <style>
+        .event-card {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .event-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Sélectionner un Événement à Modifier</h1>
+    </header>
+
+    <section class="event-list">
+        <!-- Afficher la liste des événements avec un lien vers edit-event.php pour chaque événement -->
+        <?php
+        session_start();
+        $host = 'localhost';
+        $db_user = 'root';
+        $db_pass = '';
+        $db_name = 'evenement';
+
+        $conn = mysqli_connect($host, $db_user, $db_pass, $db_name);
+
+        if (!$conn) {
+            die("Echec de la connexion" . mysqli_connect_error());
+        }
+
+        // Récupérer l'IDENTIFIANT de l'utilisateur connecté
+        $identifiant = $_SESSION['identifiant'];
+
+        // Requête SQL pour sélectionner les événements liés à l'IDENTIFIANT de l'utilisateur
+        $query = "SELECT * FROM events WHERE IDENTIFIANT = '$identifiant'";
+        $result = mysqli_query($conn, $query);
+
+        // Affichage de la liste des événements avec des liens vers edit-event.php
+        while ($row = mysqli_fetch_assoc($result)) {
+            echo '<div class="event-card">';
+            echo '<p class="event-title"><a href="edit-event.php?id=' . $row['TITRE'] . '">' . $row['TITRE'] . '</a></p>';
+            echo '<p>Date: ' . $row['DATE'] . '</p>';
+            echo '<p>Lieu: ' . $row['LOCATION'] . '</p>';
+            // Ajoutez d'autres informations si nécessaire
+            echo '</div>';
+        }
+        ?>
+    </section>
+
+    <form action="logout.php" method="post">
+        <input type="submit" value="Déconnexion">
+      </form>
+
+    <footer>
+        <p>&copy; 2023 Your Event Website</p>
+    </footer>
+</body>
+
+</html>
