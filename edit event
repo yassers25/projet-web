@@ -1,0 +1,89 @@
+<?php
+session_start();
+$host = 'localhost';
+$db_user = 'root';
+$db_pass = '';
+$db_name = 'evenement';
+
+$conn = mysqli_connect($host, $db_user, $db_pass, $db_name);
+
+if (!$conn) {
+    die("Echec de la connexion" . mysqli_connect_error());
+}
+
+// Vérifier si l'utilisateur est connecté
+if (!isset($_SESSION['identifiant'])) {
+    // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+    header("Location: login.php");
+    exit();
+}
+
+// Récupérer l'ID de l'événement à partir de l'URL
+$event_id_to_edit = isset($_GET['id']) ? $_GET['id'] : null;
+
+// Si l'ID n'est pas défini dans l'URL, redirigez vers la page de sélection
+if (!$event_id_to_edit) {
+    header("Location: select-event.php");
+    exit();
+}
+
+// Le reste du code pour récupérer les détails de l'événement à partir de la base de données
+$query = "SELECT * FROM events WHERE TITRE = '$event_id_to_edit'";
+$result = mysqli_query($conn, $query);
+
+// Si l'événement n'est pas trouvé, rediriger vers la page de sélection
+if (!$result || mysqli_num_rows($result) === 0) {
+    header("Location: select-event.php");
+    exit();
+}
+
+$event = mysqli_fetch_assoc($result);
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Modifier un Événement</title>
+    <style>
+        /* Ajoutez votre style CSS ici */
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Modifier un Événement</h1>
+    </header>
+
+    <section class="event-form">
+        <!-- Formulaire pour modifier l'événement -->
+        <form action="process-edit-event.php" method="POST">
+            <input type="hidden" name="event_id" value="<?php echo $event['TITRE']; ?>">
+            <!-- Ajoutez d'autres champs du formulaire en fonction de vos besoins -->
+            <label for="titre">Titre:</label>
+            <input type="text" id="titre" name="titre" value="<?php echo $event['TITRE']; ?>" required>
+
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" required><?php echo $event['DESCRIPTION']; ?></textarea>
+
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" value="<?php echo $event['DATE']; ?>" required>
+
+            <label for="lieu">Lieu:</label>
+            <input type="text" id="lieu" name="lieu" value="<?php echo $event['LOCATION']; ?>" required>
+
+            <!-- Ajoutez d'autres champs du formulaire en fonction de vos besoins -->
+
+            <input type="submit" name="modifier_event" value="Modifier l'Événement">
+        </form>
+    </section>
+
+    <footer>
+        <p>&copy; 2023 Your Event Website</p>
+    </footer>
+</body>
+
+</html>
