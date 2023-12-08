@@ -16,7 +16,7 @@ include("connect.php");
         integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="dash_styles">
-    <title>Dashboard</title>    
+    <title>Dashboard</title>
 
 
 </head>
@@ -114,52 +114,50 @@ include("connect.php");
     </nav>
 
     <div class="table-responsive">
-        <h3 style="margin-top:5rem;">Catégories</h3>
-        <table class="table table-striped table-bordered bg-light" id="dataTable" width="80%" cellspacing="0" style="margin-top:1rem;">
+        <h3 style="margin-top:5rem;color:rgb(220,220,220);">Catégories</h3>
+        <table class="table table-striped table-bordered " id="dataTable" width="80%" cellspacing="0"
+            style="margin-top:1rem;">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Nom Categorie</th>
-                    <th>Numero des évènments</th>
-                    <th>Action</th>
+                    <th class="bg-light">ID</th>
+                    <th class="bg-light">Nom Categorie</th>
+                    <th class="bg-light">Numero des évènments</th>
+                    <th class="bg-light">Action</th>
                 </tr>
             </thead>
             <?php
 
-            
 
-            $sql = "SELECT * FROM categorie";
+
+            $sql = "SELECT categorie.ID, categorie.label, COUNT(events.ID) AS num_events
+                    FROM categorie
+                    LEFT JOIN events  ON categorie.ID = events.id_categorie
+                    GROUP BY categorie.ID, categorie.label";
             $result = mysqli_query($conn, $sql);
 
             if (mysqli_num_rows($result) > 0) {
-
-                // output data of each row
-            
                 while ($row = mysqli_fetch_assoc($result)) { ?>
                     <tbody>
                         <tr>
                             <th>
                                 <?php echo $row['ID']; ?>
                             </th>
-
                             <td>
-
                                 <?php echo $row['label']; ?>
-
                             </td>
-
                             <td>
-
-                                <?php echo 1 ?>
-
+                                <?php echo $row['num_events']; ?>
                             </td>
                             <td>
                                 <button type="button" class="btn btn-primary">
                                     <i class="fas fa-edit"></i> Edit
                                 </button>
-                                <button type="button" class="btn btn-danger">
-                                    <i class="fas fa-trash-alt"></i> Delete
-                                </button>
+                                <form method="post" action="delete_categorie.php">
+                                <input type="hidden" name="cat_delete" value="<?php echo $row['ID']; ?>">
+                                    <button type="submit" name="delete_event" class="btn btn-danger">
+                                        <i class="fas fa-trash-alt"></i> Delete
+                                    </button>
+                                </form>
 
                             </td>
 
@@ -182,20 +180,20 @@ include("connect.php");
     </div>
 
     <div class="table-responsive">
-        <h3 style="margin-top:5rem;">Evenements</h3>
-        <table class="table table-bordered bg-light" id="dataTable" width="100%" cellspacing="0" style="margin-top:1rem;">
+        <h3 style="margin-top:5rem;color:rgb(220,220,220);;">Evenements</h3>
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0" style="margin-top:1rem;">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Nom Evenement</th>
-                    <th>Numero des participants</th>
-                    <th>Action</th>
+                    <th class="bg-light">ID</th>
+                    <th class="bg-light">Nom Evenement</th>
+                    <th class="bg-light">Numero des participants</th>
+                    <th class="bg-light">Action</th>
 
                 </tr>
             </thead>
             <?php
 
-            
+
 
             $sql = "SELECT * FROM events";
             $result = mysqli_query($conn, $sql);
@@ -226,9 +224,12 @@ include("connect.php");
                                 <button type="button" class="btn btn-primary">
                                     <i class="fas fa-edit"></i> Edit
                                 </button>
-                                <button type="button" class="btn btn-danger">
-                                    <i class="fas fa-trash-alt"></i> Delete
-                                </button>
+                                <form method="post" action="delete_event.php">
+                                <input type="hidden" name="event_delete" value="<?php echo $row['ID']; ?>">
+                                    <button type="submit" name="delete_event" class="btn btn-danger">
+                                        <i class="fas fa-trash-alt"></i> Delete
+                                    </button>
+                                </form>
 
                             </td>
 
