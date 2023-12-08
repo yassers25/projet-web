@@ -1,0 +1,30 @@
+<?php
+include("connect.php");
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cat_delete'])) {
+    $cat_delete = $_POST['cat_delete'];
+    $delete_query = "DELETE FROM categorie WHERE ID = $cat_delete";
+    if (mysqli_query($conn, $delete_query)) {
+        header("location: /proj/dashboard.php");
+        
+    } else {
+        echo "Error deleting event: " . mysqli_error($conn);
+    }
+} else {
+    echo "Invalid request or event ID not set";
+}
+?>
+<?php
+include("connect.php");
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cat_delete'])) {
+    $cat_delete = $_POST['cat_delete'];
+    $delete_query = "DELETE FROM categorie WHERE ID = $cat_delete";
+    if (mysqli_query($conn, $delete_query)) {
+        header("location: /proj/dashboard.php");
+        
+    } else {
+        echo "Error deleting event: " . mysqli_error($conn);
+    }
+} else {
+    echo "Invalid request or event ID not set";
+}
+?>
